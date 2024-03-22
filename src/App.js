@@ -8,6 +8,8 @@ function TodoApp() {
   const [tasks, setTasks] = useState([]);
   const [taskInput, setTaskInput] = useState('');
 
+const [editingIndex, setEditingIndex] = useState(null);
+
   const handleInputChange = (event) => {
     setTaskInput(event.target.value);
   };
@@ -25,7 +27,24 @@ function TodoApp() {
     setTasks(updatedTasks);
   };
 
+  const editTask = (index) => {
+    setEditingIndex(index);
+    setTaskInput(tasks[index]);
+  };
+
+  const saveEditedTask = () => {
+    if (taskInput.trim() !== '') {
+      const updatedTasks = [...tasks];
+      updatedTasks[editingIndex] = taskInput;
+      setTasks(updatedTasks);
+      setTaskInput('');
+      setEditingIndex(null);
+    }
+  };
+
+
   return (
+
     <div className="todo-app">
       <h1>To-Do List</h1>
       <div className="add-task">
@@ -35,12 +54,19 @@ function TodoApp() {
           value={taskInput}
           onChange={handleInputChange}
         />
+
+       {editingIndex !== null ? (
+          <button onClick={saveEditedTask}>Save</button>
+        ) : (
         <button onClick={addTask}>Add</button>
-      </div>
+     
+        )}
+         </div>
       <div className="task-list">
         {tasks.map((task, index) => (
           <div key={index} className="task-item">
             <span>{task}</span>
+            <button onClick={() => editTask(index)}>Edit</button>
             <button onClick={() => removeTask(index)}>Delete</button>
           </div>
         ))}
